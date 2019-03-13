@@ -34,7 +34,8 @@ function ValidateConfig(config) {
                     hosts: [{
                         host: config.mongodb.host,
                         port: config.mongodb.port
-                    }]
+                    }],
+                    collection: config.mongodb.collection
                 };
             } else {
                 return false;
@@ -100,7 +101,8 @@ function BackupMongoDatabase(config) {
             host = config.mongodb.hosts[0].host || null,
             port = config.mongodb.hosts[0].port || null,
             ssl = config.mongodb.ssl || null,
-            authenticationDatabase = config.mongodb.authenticationDatabase || null;
+            authenticationDatabase = config.mongodb.authenticationDatabase || null,
+            collection = config.mongodb.collection;
 
         let DB_BACKUP_NAME = `${database}_${currentTime(timezoneOffset)}.gz`;
 
@@ -118,6 +120,7 @@ function BackupMongoDatabase(config) {
 
         if (ssl) command += ` --ssl`;
         if (authenticationDatabase) command += ` --authenticationDatabase=${authenticationDatabase}`;
+        if (collection) command += ` --collection=${collection}`;
 
         exec(command, (err, stdout, stderr) => {
             if (err) {
